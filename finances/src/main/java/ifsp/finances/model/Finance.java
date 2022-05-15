@@ -34,9 +34,6 @@ public class Finance {
     @Column(name = "category", nullable = false)
     private String categoria;
 
-    @Column(name = "description", nullable = false)
-    private String descricao;
-
     @Column(name = "valor", nullable = false)
     private long valor;
 

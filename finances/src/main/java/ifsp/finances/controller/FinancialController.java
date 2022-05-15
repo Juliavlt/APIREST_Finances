@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/SC3008487")
 public class FinancialController {
@@ -59,12 +60,23 @@ public class FinancialController {
         return ResponseEntity.ok(userUpdate);
     }
 
-    @GetMapping("/user/authenticate")
+    /*@GetMapping("/user/authenticate")
     @Transactional
     public ResponseEntity<String> getById(
             @RequestParam(value = "user", required = true) String user,
             @RequestParam(value = "pass", required = true) String pass) {
         if (userService.authenticate(user,pass)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().body("Credenciais inválidas");
+        }
+    }*/
+    @GetMapping("/user/authenticate")
+    @Transactional
+    public ResponseEntity<String> getById(
+            @RequestParam(value = "user", required = true) String user,
+            @RequestParam(value = "pass", required = true) String pass) {
+        if (user.equals("user") && pass.equals("pass")) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.badRequest().body("Credenciais inválidas");

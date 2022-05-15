@@ -1,11 +1,10 @@
 package ifsp.finances.model.dto;
 
-import ifsp.finances.enums.CategoryEnum;
-import ifsp.finances.enums.TypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -24,11 +23,10 @@ public class FinanceRequestDTO implements Serializable {
 
     private int tipo;
 
+    @CreatedDate
     private LocalDateTime dataMovimentacao;
 
     private int categoria;
-
-    private String descricao;
 
     private long valor;
 }

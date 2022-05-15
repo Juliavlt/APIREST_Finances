@@ -1,7 +1,5 @@
 package ifsp.finances.model.dto;
 
-import ifsp.finances.enums.CategoryEnum;
-import ifsp.finances.enums.TypeEnum;
 import lombok.*;
 
 import java.io.Serializable;
@@ -27,8 +25,6 @@ public class FinanceResponseDTO implements Serializable {
     private LocalDateTime modifiedAt;
 
     private String categoria;
-
-    private String descricao;
 
     private long valor;
 }
