@@ -18,4 +18,5 @@ public enum ExpenseCategoryEnum {
         this.id = id;
 
     }
+
 }

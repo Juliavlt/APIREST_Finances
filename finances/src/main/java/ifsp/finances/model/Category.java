@@ -6,21 +6,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "finances")
+@Table(name = "category")
 @JsonIdentityInfo(scope = Finance.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Finance {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,20 +25,10 @@ public class Finance {
     @Column(name = "idUser", nullable = false)
     private long idUser;
 
-    @Column(name = "type", nullable = false)
-    private int tipo;
+    @Column(name = "tipo", nullable = false)
+    private long tipo;
 
-    @Column(name = "category", nullable = false)
+    @Column(name = "categoria", nullable = false)
     private String categoria;
 
-    @Column(name = "valor", nullable = false)
-    private long valor;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDate createdAt;
-
-    @LastModifiedDate
-    @Column(name = "modified_at")
-    private LocalDate modifiedAt;
 }

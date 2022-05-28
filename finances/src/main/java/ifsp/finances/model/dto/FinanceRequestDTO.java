@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -24,9 +25,9 @@ public class FinanceRequestDTO implements Serializable {
     private int tipo;
 
     @CreatedDate
-    private LocalDateTime dataMovimentacao;
+    private LocalDate dataMovimentacao;
 
-    private int categoria;
+    private String categoria;
 
     private long valor;
 }

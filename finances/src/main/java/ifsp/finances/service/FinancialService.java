@@ -11,9 +11,12 @@ import ifsp.finances.repository.FinanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,23 +28,23 @@ public class FinancialService{
 
         Finance finance = Finance.builder()
                 .idUser(requestDTO.getIdUser())
-                .tipo(this.getTipo(requestDTO.getTipo()))
-                .categoria(this.getCategoria(requestDTO.getCategoria(), requestDTO.getTipo()))
+                .tipo(requestDTO.getTipo())
+                .categoria(requestDTO.getCategoria())
                 .valor(requestDTO.getValor())
                 .createdAt(requestDTO.getDataMovimentacao())
                 .modifiedAt(null)
                 .build();
 
         repository.save(finance);
-
         return FinanceResponseDTO.builder()
                 .id(finance.getId())
                 .idUser(finance.getIdUser())
                 .tipo(finance.getTipo())
-                .categoria(finance.getCategoria())
+                .categoria(finance.getCategoria().toUpperCase(Locale.ROOT))
                 .valor(requestDTO.getValor())
-                .createdAt(requestDTO.getDataMovimentacao())
-                .modifiedAt(null).build();
+                .dataMovimentacao(finance.getModifiedAt() == null ? finance.getCreatedAt() : finance.getModifiedAt())
+                .build();
+
     }
 
     public FinanceResponseDTO update(Long id,FinanceRequestDTO requestDTO) {
@@ -50,20 +53,21 @@ public class FinancialService{
         repository.save(Finance.builder()
                 .id(finance.getId())
                 .idUser(finance.getIdUser())
-                .tipo(this.getTipo(requestDTO.getTipo()))
-                .categoria(this.getCategoria(requestDTO.getCategoria(), requestDTO.getTipo()))
+                .tipo(requestDTO.getTipo())
+                .categoria(requestDTO.getCategoria())
                 .valor(requestDTO.getValor())
                 .createdAt(finance.getCreatedAt())
-                .modifiedAt(LocalDateTime.now()).build());
+                .modifiedAt(LocalDate.now()).build());
 
         return FinanceResponseDTO.builder()
                 .id(finance.getId())
                 .idUser(finance.getIdUser())
-                .tipo(this.getTipo(requestDTO.getTipo()))
-                .categoria(this.getCategoria(requestDTO.getCategoria(),requestDTO.getTipo()))
+                .tipo(finance.getTipo())
+                .categoria(finance.getCategoria().toUpperCase(Locale.ROOT))
                 .valor(requestDTO.getValor())
-                .createdAt(finance.getCreatedAt())
-                .modifiedAt(LocalDateTime.now()).build();
+                .dataMovimentacao(finance.getModifiedAt() == null ? finance.getCreatedAt() : finance.getModifiedAt())
+                .build();
+
     }
 
     public ReceitasDespesasResponseDTO getFinanceByUserId(long userId) {
@@ -72,8 +76,24 @@ public class FinancialService{
         return buildExpenseIncomeList(financesList, userId);
     }
 
-    public ReceitasDespesasResponseDTO getAllFinances() {
-        List<Finance> accountingList = repository.findAll();
+    public FinanceResponseDTO getFinanceById(long id) {
+        Optional<Finance> finance = repository.findById(id);
+
+        if(finance.isPresent()){
+            return FinanceResponseDTO.builder()
+                    .id(finance.get().getId())
+                    .idUser(finance.get().getIdUser())
+                    .tipo(finance.get().getTipo())
+                    .categoria(finance.get().getCategoria().toUpperCase(Locale.ROOT))
+                    .valor(finance.get().getValor())
+                    .dataMovimentacao(finance.get().getModifiedAt() == null ? finance.get().getCreatedAt() : finance.get().getModifiedAt())
+                .build();
+        }
+        return null;
+    }
+
+    public ReceitasDespesasResponseDTO getAllFinances(long idUser) {
+        List<Finance> accountingList = repository.findByIdUser(idUser);
         if(accountingList.isEmpty()){
             return ReceitasDespesasResponseDTO.builder()
                     .idUser(1)
@@ -88,8 +108,12 @@ public class FinancialService{
         }
     }
 
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public boolean delete(Long id) {
+        if(repository.getById(id)!=null){
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     public ReceitasDespesasResponseDTO buildExpenseIncomeList(List<Finance> accounts, long idUser) {
@@ -97,13 +121,13 @@ public class FinancialService{
         List<Finance> financialExpensesResponseList;
         financialExpensesResponseList =
                 accounts.stream()
-                        .filter(accounting -> accounting.getTipo().equals(TypeEnum.DESPESA.getDescription()))
+                        .filter(accounting -> accounting.getTipo() == TypeEnum.DESPESA.getId())
                         .collect(Collectors.toList());
 
         List<Finance> financialIncomeResponseList;
         financialIncomeResponseList =
                 accounts.stream()
-                        .filter(accounting -> accounting.getTipo().equals(TypeEnum.RECEITA.getDescription()))
+                        .filter(accounting -> accounting.getTipo() == TypeEnum.RECEITA.getId())
                         .collect(Collectors.toList());
 
         return ReceitasDespesasResponseDTO.builder()
@@ -117,47 +141,9 @@ public class FinancialService{
 
     public long getValorTotalFinancas(List<Finance> accounts, TypeEnum type) {
         return accounts.stream()
-                .filter(accounting -> accounting.getTipo().equals(type.getDescription()))
+                .filter(accounting -> accounting.getTipo()==type.getId())
                 .mapToLong(Finance::getValor)
                 .sum();
-    }
-
-    private String getCategoria(int id, int tipo){
-        String categoria="";
-        if (tipo == 1){
-            if (ExpenseCategoryEnum.SAUDE.getId() == id){
-                categoria = ExpenseCategoryEnum.SAUDE.getDescription();
-            } else if (ExpenseCategoryEnum.TRANSPORTE.getId() == id) {
-                categoria = ExpenseCategoryEnum.TRANSPORTE.getDescription();
-            }else if (ExpenseCategoryEnum.EDUCACAO.getId() == id) {
-                categoria = ExpenseCategoryEnum.EDUCACAO.getDescription();
-            }else if (ExpenseCategoryEnum.OUTRO.getId() == id) {
-                categoria = ExpenseCategoryEnum.OUTRO.getDescription();
-            } else {
-                categoria = ExpenseCategoryEnum.RESTAURANTE.getDescription();
-            }
-        } else {
-            if (IncomeCategoryEnum.SALARIO.getId() == id) {
-                categoria = IncomeCategoryEnum.SALARIO.getDescription();
-            }else if (IncomeCategoryEnum.RENDAEXTRA.getId() == id) {
-                categoria = IncomeCategoryEnum.RENDAEXTRA.getDescription();
-            } else {
-                categoria = IncomeCategoryEnum.OUTRO.getDescription();
-            }
-        }
-
-        return categoria;
-    }
-
-    private String getTipo(int id){
-        String tipo="";
-        if(TypeEnum.DESPESA.getId() == id){
-            tipo =  TypeEnum.DESPESA.getDescription();
-        } else if(TypeEnum.RECEITA.getId() == id){
-            tipo =  TypeEnum.RECEITA.getDescription();
-        }
-
-        return tipo;
     }
 
 

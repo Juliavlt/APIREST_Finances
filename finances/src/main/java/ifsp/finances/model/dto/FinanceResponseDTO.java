@@ -1,8 +1,10 @@
 package ifsp.finances.model.dto;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -18,11 +20,10 @@ public class FinanceResponseDTO implements Serializable {
 
     private long idUser;
 
-    private String tipo;
+    private int tipo;
 
-    private LocalDateTime createdAt;
-
-    private LocalDateTime modifiedAt;
+    @CreatedDate
+    private LocalDate dataMovimentacao;
 
     private String categoria;
 
