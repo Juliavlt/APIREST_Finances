@@ -1,27 +1,19 @@
 package ifsp.finances.service;
 
-import ifsp.finances.enums.ExpenseCategoryEnum;
-import ifsp.finances.enums.IncomeCategoryEnum;
-import ifsp.finances.enums.TypeEnum;
 import ifsp.finances.model.Category;
 import ifsp.finances.model.Finance;
 import ifsp.finances.model.User;
 import ifsp.finances.model.dto.*;
 import ifsp.finances.repository.CategoryRepository;
-import ifsp.finances.repository.FinanceRepository;
 import ifsp.finances.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.DelegatingServerHttpResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService{
@@ -163,6 +155,10 @@ public class UserService{
                     users.get(i).getPassword().equals(password)) {
                 return getUserById(users.get(i).getId());
             }
+            if (users.get(i).getUsername().equals(username) &&
+                    !users.get(i).getPassword().equals(password)) {
+                return UserResponseDTO.builder().erro("Dados incorretos!").build();
+            }
         }
         return UserResponseDTO.builder().erro("Usuário não existe.").build();
     }
@@ -200,9 +196,14 @@ public class UserService{
 
         for (int i = 0; i < categoriesList.size(); i++) {
             if(categoriesList.get(i).getCategoria().equals(categoria.toUpperCase(Locale.ROOT))){
-                return CategoryResponseDTO.builder().erro("Categoria já cadastrada").build(); //categoria ja existe
+                return CategoryResponseDTO.builder().erro("Categoria já cadastrada").build();
             }
         }
+
+        if(categoria.isEmpty()|| categoria==null || categoria.equals("undefined")){
+            return CategoryResponseDTO.builder().erro("Digite uma categoria válida!").build();
+        }
+
         Category category = Category.builder()
                 .tipo(tipo)
                 .idUser(userId)

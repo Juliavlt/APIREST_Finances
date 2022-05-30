@@ -29,6 +29,19 @@ public class FinancialController {
     @Autowired private CategoryService categoryService;
 
 
+    @GetMapping("/user/authenticate")
+    @Transactional
+    public ResponseEntity<UserResponseDTO> getUserById(
+            @RequestParam(value = "user", required = true) String user,
+            @RequestParam(value = "pass", required = true) String pass) {
+
+        UserResponseDTO response = userService.authenticate(user,pass);
+        if (response.getErro() == null) {
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.badRequest().body(response);
+    }
+
     @PostMapping("/user")
     @Transactional
     public ResponseEntity<UserResponseDTO> createUser(
@@ -63,20 +76,7 @@ public class FinancialController {
             return ResponseEntity.ok(user);
         }
 
-        return ResponseEntity.notFound().build();
-    }
-
-    @GetMapping("/user/authenticate")
-    @Transactional
-    public ResponseEntity<UserResponseDTO> getUserById(
-            @RequestParam(value = "user", required = true) String user,
-            @RequestParam(value = "pass", required = true) String pass) {
-
-        UserResponseDTO response = userService.authenticate(user,pass);
-        if (response.getErro() == null) {
-            return ResponseEntity.ok(response);
-        }
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.badRequest().body(user);
     }
 
     @GetMapping("/users")
@@ -92,14 +92,17 @@ public class FinancialController {
     @Transactional
     public ResponseEntity<FinanceResponseDTO> createFinance(
             @RequestBody FinanceRequestDTO financial) {
-        FinanceResponseDTO saveFinancial = financialService.create(financial);
+        FinanceResponseDTO response = financialService.create(financial);
         URI locationResource =
                 ServletUriComponentsBuilder.fromCurrentRequest()
                         .path("/{id}")
-                        .buildAndExpand(saveFinancial.getId())
+                        .buildAndExpand(response.getId())
                         .toUri();
 
-        return ResponseEntity.created(locationResource).body(saveFinancial);
+        if (response.getErro()==null){
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.badRequest().body(response);
     }
 
     @PutMapping("/financial/{id}")
@@ -155,8 +158,12 @@ public class FinancialController {
             @RequestParam(value = "idUser", required = true) int idUser,
             @RequestParam(value = "tipo", required = true) int tipo
     ) {
-        CategoryResponseDTO categories = categoryService.getAllCategories(tipo, idUser);
-        return ResponseEntity.ok(categories);
+        CategoryResponseDTO response= categoryService.getAllCategories(tipo, idUser);
+        if(response.getErro()==null){
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.badRequest().body(response);
     }
 
 }

@@ -35,6 +35,7 @@ public class CategoryService {
                 categoriasDoUsuario.add(categoriesUser.get(i));
             }
         }
+
         return CategoryResponseDTO.builder()
                 .categoriasDoUsuario(categoriasDoUsuario)
                 .categoriasGlobais(categoriasGlobais)
