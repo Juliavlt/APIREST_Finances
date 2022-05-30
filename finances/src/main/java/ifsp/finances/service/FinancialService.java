@@ -58,7 +58,8 @@ public class FinancialService{
                 .categoria(requestDTO.getCategoria())
                 .valor(requestDTO.getValor())
                 .createdAt(finance.getCreatedAt())
-                .modifiedAt(LocalDate.now()).build());
+                .modifiedAt(requestDTO.getDataMovimentacao())
+                .build());
 
         return FinanceResponseDTO.builder()
                 .id(finance.getId())
@@ -66,7 +67,7 @@ public class FinancialService{
                 .tipo(finance.getTipo())
                 .categoria(finance.getCategoria().toUpperCase(Locale.ROOT))
                 .valor(requestDTO.getValor())
-                .dataMovimentacao(finance.getModifiedAt() == null ? finance.getCreatedAt().toString() : finance.getModifiedAt().toString())
+                .dataMovimentacao(requestDTO.getDataMovimentacao().toString())
                 .build();
 
     }
