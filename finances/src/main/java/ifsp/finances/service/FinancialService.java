@@ -36,6 +36,7 @@ public class FinancialService{
                 .build();
 
         repository.save(finance);
+
         return FinanceResponseDTO.builder()
                 .id(finance.getId())
                 .idUser(finance.getIdUser())
@@ -48,7 +49,10 @@ public class FinancialService{
     }
 
     public FinanceResponseDTO update(Long id,FinanceRequestDTO requestDTO) {
-        Finance finance = repository.findById(id).orElseThrow(() -> new Error("Not Found"));
+        Finance finance = repository.findById(id).get();
+        if(finance==null){
+            FinanceResponseDTO.builder().erro("Finança não encontrada").build();
+        }
 
         repository.save(Finance.builder()
                 .id(finance.getId())
@@ -89,7 +93,7 @@ public class FinancialService{
                     .dataMovimentacao(finance.get().getModifiedAt() == null ? finance.get().getCreatedAt() : finance.get().getModifiedAt())
                 .build();
         }
-        return null;
+        return FinanceResponseDTO.builder().erro("Finança não encontrada!").build();
     }
 
     public ReceitasDespesasResponseDTO getAllFinances(long idUser) {

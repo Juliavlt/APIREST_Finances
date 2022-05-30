@@ -36,5 +36,7 @@ public class UserResponseDTO implements Serializable {
     private long totalReceitas;
 
     private long total;
+
+    private String erro;
 }
 

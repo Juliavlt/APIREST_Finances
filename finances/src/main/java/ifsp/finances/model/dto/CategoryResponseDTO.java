@@ -18,4 +18,6 @@ public class CategoryResponseDTO {
 
     private List<Category> categoriasDoUsuario;
 
+    private String erro;
+
 }

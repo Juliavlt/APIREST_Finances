@@ -1,5 +1,6 @@
 package ifsp.finances.controller;
 
+import ifsp.finances.model.Category;
 import ifsp.finances.model.dto.*;
 import ifsp.finances.repository.CategoryRepository;
 import ifsp.finances.service.CategoryService;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.transaction.Transactional;
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -34,8 +36,7 @@ public class FinancialController {
 
         UserResponseDTO saveUser = userService.create(userRequestDTO);
 
-        if(saveUser!=null){
-
+        if(saveUser.getErro()==null){
             URI locationResource =
                     ServletUriComponentsBuilder.fromCurrentRequest()
                             .path("/{id}")
@@ -43,16 +44,7 @@ public class FinancialController {
                             .toUri();
             return ResponseEntity.created(locationResource).body(saveUser);
         }
-        return ResponseEntity.badRequest().build();
-    }
-
-    @PutMapping("/user/{id}")
-    @Transactional
-    public ResponseEntity<UserResponseDTO> updateUser(
-            @PathVariable Long id,
-            @RequestBody UserRequestDTO userRequestDTO) {
-        UserResponseDTO userUpdate = userService.update(id, userRequestDTO);
-        return ResponseEntity.ok(userUpdate);
+        return ResponseEntity.badRequest().body(saveUser);
     }
 
     @DeleteMapping("/user/{id}")
@@ -66,8 +58,12 @@ public class FinancialController {
     @Transactional
     public ResponseEntity<UserResponseDTO> getUser(
             @PathVariable Long id) {
-        UserResponseDTO userUpdate = userService.getUserById(id);
-        return ResponseEntity.ok(userUpdate);
+        UserResponseDTO user = userService.getUserById(id);
+        if(user.getErro()==null){
+            return ResponseEntity.ok(user);
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/user/authenticate")
@@ -77,7 +73,7 @@ public class FinancialController {
             @RequestParam(value = "pass", required = true) String pass) {
 
         UserResponseDTO response = userService.authenticate(user,pass);
-        if (response != null) {
+        if (response.getErro() == null) {
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.badRequest().body(response);
@@ -86,9 +82,7 @@ public class FinancialController {
     @GetMapping("/users")
     @Transactional
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-
         List<UserResponseDTO> response = userService.getAllUsers();
-
         return ResponseEntity.ok(response);
     }
 
@@ -112,8 +106,11 @@ public class FinancialController {
     @Transactional
     public ResponseEntity<FinanceResponseDTO> updateFinance(
             @PathVariable Long id, @RequestBody FinanceRequestDTO financeRequest) {
-        FinanceResponseDTO financeUpdate = financialService.update(id,financeRequest);
-        return ResponseEntity.ok(financeUpdate);
+        FinanceResponseDTO response = financialService.update(id,financeRequest);
+        if (response.getErro()==null){
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.badRequest().body(response);
     }
 
     @GetMapping("/financial/{id}")
@@ -121,19 +118,10 @@ public class FinancialController {
     public ResponseEntity<FinanceResponseDTO> getFinanceById(@PathVariable long id) {
 
         FinanceResponseDTO response = financialService.getFinanceById(id);
-        if (response!=null){
+        if (response.getErro()==null){
             return ResponseEntity.ok(response);
         }
         return ResponseEntity.badRequest().body(response);
-    }
-
-    @GetMapping("/financial")
-    @Transactional
-    public ResponseEntity<ReceitasDespesasResponseDTO> getAllFinances(int idUser) {
-
-        ReceitasDespesasResponseDTO response = financialService.getAllFinances(idUser);
-
-        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/financial/{id}")
@@ -147,13 +135,18 @@ public class FinancialController {
 
     @PostMapping("/category")
     @Transactional
-    public ResponseEntity createCategoria(
+    public ResponseEntity<CategoryResponseDTO> createCategoria(
             @RequestParam(value = "categoria", required = true) String categoria,
             @RequestParam(value = "idUser", required = true) long idUser,
             @RequestParam(value = "tipo", required = true) long tipo) {
 
-        userService.createCategoria(categoria, idUser, tipo);
-        return ResponseEntity.ok().build();
+        CategoryResponseDTO response =  userService.createCategoria(categoria, idUser, tipo);
+
+        if(response.getErro()==null){
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.badRequest().body(response);
     }
 
     @GetMapping("/category")
