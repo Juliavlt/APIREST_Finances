@@ -22,8 +22,7 @@ public class FinanceResponseDTO implements Serializable {
 
     private int tipo;
 
-    @CreatedDate
-    private LocalDate dataMovimentacao;
+    private String dataMovimentacao;
 
     private String categoria;
 

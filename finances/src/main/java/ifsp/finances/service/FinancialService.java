@@ -40,7 +40,7 @@ public class FinancialService{
                 .tipo(finance.getTipo())
                 .categoria(finance.getCategoria().toUpperCase(Locale.ROOT))
                 .valor(requestDTO.getValor())
-                .dataMovimentacao(finance.getModifiedAt() == null ? finance.getCreatedAt() : finance.getModifiedAt())
+                .dataMovimentacao(finance.getModifiedAt() == null ? finance.getCreatedAt().toString() : finance.getModifiedAt().toString())
                 .build();
 
     }
@@ -66,7 +66,7 @@ public class FinancialService{
                 .tipo(finance.getTipo())
                 .categoria(finance.getCategoria().toUpperCase(Locale.ROOT))
                 .valor(requestDTO.getValor())
-                .dataMovimentacao(finance.getModifiedAt() == null ? finance.getCreatedAt() : finance.getModifiedAt())
+                .dataMovimentacao(finance.getModifiedAt() == null ? finance.getCreatedAt().toString() : finance.getModifiedAt().toString())
                 .build();
 
     }
@@ -87,7 +87,7 @@ public class FinancialService{
                     .tipo(finance.get().getTipo())
                     .categoria(finance.get().getCategoria().toUpperCase(Locale.ROOT))
                     .valor(finance.get().getValor())
-                    .dataMovimentacao(finance.get().getModifiedAt() == null ? finance.get().getCreatedAt() : finance.get().getModifiedAt())
+                    .dataMovimentacao(finance.get().getModifiedAt() == null ? finance.get().getCreatedAt().toString() : finance.get().getModifiedAt().toString())
                 .build();
         }
         return FinanceResponseDTO.builder().erro("Finança não encontrada!").build();
