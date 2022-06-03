@@ -29,7 +29,7 @@ public class FinancialService{
                 .categoria(requestDTO.getCategoria())
                 .valor(requestDTO.getValor())
                 .createdAt(requestDTO.getDataMovimentacao())
-                .modifiedAt(null)
+                .modifiedAt(requestDTO.getDataMovimentacao())
                 .build();
 
         repository.save(finance);

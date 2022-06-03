@@ -170,11 +170,11 @@ public class UserService{
         long total = 0;
 
         for (int i = 0; i < despesas.size(); i++) {
-            totalDespesas = despesas.get(i).getValor();
+            totalDespesas += despesas.get(i).getValor();
         }
 
         for (int i = 0; i < receitas.size(); i++) {
-            totalReceitas = receitas.get(i).getValor();
+            totalReceitas += receitas.get(i).getValor();
         }
 
         if (totalDespesas>totalReceitas){
