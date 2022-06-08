@@ -48,11 +48,11 @@ public class User {
     private List<Finance> receitas;
 
     @Column(name = "totalDespesas", nullable = false)
-    private long totalDespesas;
+    private double totalDespesas;
 
     @Column(name = "totalReceitas", nullable = false)
-    private long totalReceitas;
+    private double totalReceitas;
 
     @Column(name = "total", nullable = false)
-    private long total;
+    private double total;
 }

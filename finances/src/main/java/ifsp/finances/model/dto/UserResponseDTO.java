@@ -29,11 +29,11 @@ public class UserResponseDTO implements Serializable {
 
     private List<Finance> receitas;
 
-    private long totalDespesas;
+    private double totalDespesas;
 
-    private long totalReceitas;
+    private double totalReceitas;
 
-    private long total;
+    private double total;
 
     private String erro;
 }

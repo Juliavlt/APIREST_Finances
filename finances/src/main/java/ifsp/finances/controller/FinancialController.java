@@ -31,33 +31,28 @@ public class FinancialController {
 
     @GetMapping("/user/authenticate")
     @Transactional
-    public ResponseEntity<UserResponseDTO> getUserById(
+    public ResponseEntity<String> getUserById(
             @RequestParam(value = "user", required = true) String user,
             @RequestParam(value = "pass", required = true) String pass) {
 
         UserResponseDTO response = userService.authenticate(user,pass);
         if (response.getErro() == null) {
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(String.valueOf(response.getId()));
         }
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.badRequest().body(response.getErro());
     }
 
     @PostMapping("/user")
     @Transactional
-    public ResponseEntity<UserResponseDTO> createUser(
+    public ResponseEntity<String> createUser(
             @RequestBody UserRequestDTO userRequestDTO) {
 
         UserResponseDTO saveUser = userService.create(userRequestDTO);
 
         if(saveUser.getErro()==null){
-            URI locationResource =
-                    ServletUriComponentsBuilder.fromCurrentRequest()
-                            .path("/{id}")
-                            .buildAndExpand(saveUser.getId())
-                            .toUri();
-            return ResponseEntity.created(locationResource).body(saveUser);
+            return ResponseEntity.ok(String.valueOf(saveUser.getId()));
         }
-        return ResponseEntity.badRequest().body(saveUser);
+        return ResponseEntity.badRequest().body(saveUser.getErro());
     }
 
     @DeleteMapping("/user/{id}")
@@ -138,7 +133,7 @@ public class FinancialController {
 
     @PostMapping("/category")
     @Transactional
-    public ResponseEntity<CategoryResponseDTO> createCategoria(
+    public ResponseEntity<String> createCategoria(
             @RequestParam(value = "categoria", required = true) String categoria,
             @RequestParam(value = "idUser", required = true) long idUser,
             @RequestParam(value = "tipo", required = true) long tipo) {
@@ -149,7 +144,7 @@ public class FinancialController {
             return ResponseEntity.ok().build();
         }
 
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.badRequest().body(response.getErro());
     }
 
     @GetMapping("/category")

@@ -36,7 +36,7 @@ public class Finance {
     private String categoria;
 
     @Column(name = "valor", nullable = false)
-    private long valor;
+    private double valor;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)

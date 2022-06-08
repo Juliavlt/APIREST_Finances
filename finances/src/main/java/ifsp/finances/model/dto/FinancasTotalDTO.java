@@ -13,9 +13,9 @@ import javax.persistence.Column;
 @AllArgsConstructor
 public class FinancasTotalDTO {
 
-    private long totalDespesas;
+    private double totalDespesas;
 
-    private long totalReceitas;
+    private double totalReceitas;
 
-    private long total;
+    private double total;
 }

@@ -19,9 +19,9 @@ public class ReceitasDespesasResponseDTO implements Serializable {
 
     private long idUser;
 
-    private long totalExpense;
+    private double totalExpense;
 
-    private long totalIncome;
+    private double totalIncome;
 
     private List<Finance> receitasResponseList;
 

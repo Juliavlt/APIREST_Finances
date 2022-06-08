@@ -141,10 +141,10 @@ public class FinancialService{
                 .build();
     }
 
-    public long getValorTotalFinancas(List<Finance> accounts, TypeEnum type) {
+    public double getValorTotalFinancas(List<Finance> accounts, TypeEnum type) {
         return accounts.stream()
                 .filter(accounting -> accounting.getTipo()==type.getId())
-                .mapToLong(Finance::getValor)
+                .mapToDouble(Finance::getValor)
                 .sum();
     }
 

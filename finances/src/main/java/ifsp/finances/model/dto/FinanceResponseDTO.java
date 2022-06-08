@@ -26,7 +26,7 @@ public class FinanceResponseDTO implements Serializable {
 
     private String categoria;
 
-    private long valor;
+    private double valor;
 
     private String erro;
 }

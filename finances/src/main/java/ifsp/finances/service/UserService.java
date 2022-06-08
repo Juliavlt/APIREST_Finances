@@ -174,7 +174,7 @@ public class UserService{
         }
 
         if (totalDespesas>totalReceitas){
-            total=totalDespesas-totalReceitas;
+            total= totalDespesas-totalReceitas;
         } else{
             total = totalReceitas-totalDespesas;
         }
