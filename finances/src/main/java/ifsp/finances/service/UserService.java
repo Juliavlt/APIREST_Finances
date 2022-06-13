@@ -115,7 +115,7 @@ public class UserService{
                     .build();
         }
 
-        return null;
+        return UserResponseDTO.builder().erro("Usuário não existe.").build();
     }
 
     public List<UserResponseDTO> getAllUsers() {

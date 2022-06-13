@@ -65,8 +65,13 @@ public class FinancialController {
     @GetMapping("/user/{id}")
     @Transactional
     public ResponseEntity<UserResponseDTO> getUser(
-            @PathVariable Long id) {
-        UserResponseDTO user = userService.getUserById(id);
+            @PathVariable String id) {
+        boolean isNumeric =  id.matches("[+-]?\\d*(\\.\\d+)?");
+        if (!isNumeric){
+            return ResponseEntity.badRequest().body(UserResponseDTO.builder().erro("Ação não permitida!").build());
+        }
+        long idUser = Long.parseLong(id);
+        UserResponseDTO user = userService.getUserById(idUser);
         if(user.getErro()==null){
             return ResponseEntity.ok(user);
         }
@@ -88,11 +93,6 @@ public class FinancialController {
     public ResponseEntity<FinanceResponseDTO> createFinance(
             @RequestBody FinanceRequestDTO financial) {
         FinanceResponseDTO response = financialService.create(financial);
-        URI locationResource =
-                ServletUriComponentsBuilder.fromCurrentRequest()
-                        .path("/{id}")
-                        .buildAndExpand(response.getId())
-                        .toUri();
 
         if (response.getErro()==null){
             return ResponseEntity.ok(response);
@@ -103,8 +103,15 @@ public class FinancialController {
     @PutMapping("/financial/{id}")
     @Transactional
     public ResponseEntity<FinanceResponseDTO> updateFinance(
-            @PathVariable Long id, @RequestBody FinanceRequestDTO financeRequest) {
-        FinanceResponseDTO response = financialService.update(id,financeRequest);
+            @PathVariable String id, @RequestBody FinanceRequestDTO financeRequest) {
+
+        boolean isNumeric =  id.matches("[+-]?\\d*(\\.\\d+)?");
+        if (!isNumeric){
+            return ResponseEntity.badRequest().body(FinanceResponseDTO.builder().erro("Ação não permitida!").build());
+        }
+        long idUser = Long.parseLong(id);
+
+        FinanceResponseDTO response = financialService.update(idUser,financeRequest);
         if (response.getErro()==null){
             return ResponseEntity.ok(response);
         }
@@ -113,9 +120,15 @@ public class FinancialController {
 
     @GetMapping("/financial/{id}")
     @Transactional
-    public ResponseEntity<FinanceResponseDTO> getFinanceById(@PathVariable long id) {
+    public ResponseEntity<FinanceResponseDTO> getFinanceById(@PathVariable String id) {
 
-        FinanceResponseDTO response = financialService.getFinanceById(id);
+        boolean isNumeric =  id.matches("[+-]?\\d*(\\.\\d+)?");
+        if (!isNumeric){
+            return ResponseEntity.badRequest().body(FinanceResponseDTO.builder().erro("Ação não permitida!").build());
+        }
+        long idFinance = Long.parseLong(id);
+
+        FinanceResponseDTO response = financialService.getFinanceById(idFinance);
         if (response.getErro()==null){
             return ResponseEntity.ok(response);
         }
@@ -135,10 +148,10 @@ public class FinancialController {
     @Transactional
     public ResponseEntity<String> createCategoria(
             @RequestParam(value = "categoria", required = true) String categoria,
-            @RequestParam(value = "idUser", required = true) long idUser,
+            @RequestParam(value = "idUser", required = true) String idUser,
             @RequestParam(value = "tipo", required = true) long tipo) {
-
-        CategoryResponseDTO response =  userService.createCategoria(categoria, idUser, tipo);
+        long id = Long.parseLong(idUser);
+        CategoryResponseDTO response =  userService.createCategoria(categoria, id, tipo);
 
         if(response.getErro()==null){
             return ResponseEntity.ok().build();
